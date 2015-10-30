@@ -8,6 +8,10 @@ namespace UnityStandardAssets.Vehicles.Ball
     {
         private Ball ball; // Reference to the ball controller.
 
+		private Animator anim;
+		public GameObject plano;
+		bool muerto = false;
+
         private Vector3 move;
         // the world-relative desired move direction, calculated from the camForward and user input.
 
@@ -21,6 +25,7 @@ namespace UnityStandardAssets.Vehicles.Ball
             // Set up the reference.
             ball = GetComponent<Ball>();
 
+			anim = GetComponent<Animator> ();
 
             // get the transform of the main camera
             if (Camera.main != null)
@@ -44,6 +49,7 @@ namespace UnityStandardAssets.Vehicles.Ball
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             jump = CrossPlatformInputManager.GetButton("Jump");
 
+			anim.SetBool ("Muerto", muerto);
             // calculate move direction
             if (cam != null)
             {
@@ -56,6 +62,7 @@ namespace UnityStandardAssets.Vehicles.Ball
                 // we use world-relative directions in the case of no main camera
                 move = (v*Vector3.forward + h*Vector3.right).normalized;
             }
+
         }
 
 
@@ -65,5 +72,30 @@ namespace UnityStandardAssets.Vehicles.Ball
             ball.Move(move, jump);
             jump = false;
         }
+
+		public void OnGUI ()
+		{
+			if (muerto)
+			{
+				
+				string texto = "<b><color=red>Game Over</color></b>";
+				GUIStyle estilo = GUI.skin.GetStyle("Label");
+				estilo.alignment = TextAnchor.MiddleCenter;
+				estilo.fontSize = 75;
+				estilo.richText = true;
+				Rect rectangulo = new Rect (Screen.width / 2 - 400, Screen.height / 2 - 250, 800, 500);
+				GUI.Label(rectangulo, texto, estilo);
+			}
+		}
+		private void OnTriggerEnter(Collider collider)
+		{
+			if (collider.tag == "muerte") {
+				gameOver ();
+			}
+		}
+
+		private void gameOver () {
+			muerto = true;
+		}
     }
 }
