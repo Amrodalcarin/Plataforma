@@ -1,16 +1,19 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
 
 namespace UnityStandardAssets.Vehicles.Ball
 {
     public class BallUserControl : MonoBehaviour
     {
-        private Ball ball; // Reference to the ball controller.
+		private Ball ball; // Reference to the ball controller.
 
 		public ParticleSystem explosion_muerte;
 		public GameObject plano;
-		bool muerto = false;
+		public Text text;
+		private bool muerto = false;
+		private bool win = false;
 
         private Vector3 move;
         // the world-relative desired move direction, calculated from the camForward and user input.
@@ -19,13 +22,16 @@ namespace UnityStandardAssets.Vehicles.Ball
         private Vector3 camForward; // The current forward direction of the camera
         private bool jump; // whether the jump button is currently pressed
 
+		public ParticleSystem explosion;
 
         private void Awake()
         {
             // Set up the reference.
             ball = GetComponent<Ball>();
 
-            // get the transform of the main camera
+			Console.Write ("TXT: HOLA");
+			
+			// get the transform of the main camera
             if (Camera.main != null)
             {
                 cam = Camera.main.transform;
@@ -60,9 +66,12 @@ namespace UnityStandardAssets.Vehicles.Ball
                 move = (v*Vector3.forward + h*Vector3.right).normalized;
             }
 
+			if (muerto)
+				gameOver ();
+			if (win)
+				gameWon ();
         }
-
-
+		
         private void FixedUpdate()
         {
             // Call the Move function of the ball controller
@@ -70,29 +79,26 @@ namespace UnityStandardAssets.Vehicles.Ball
             jump = false;
         }
 
-		public void OnGUI ()
-		{
-			if (muerto)
-			{
-				
-				string texto = "<b><color=red>Game Over</color></b>";
-				GUIStyle estilo = GUI.skin.GetStyle("Label");
-				estilo.alignment = TextAnchor.MiddleCenter;
-				estilo.fontSize = 75;
-				estilo.richText = true;
-				Rect rectangulo = new Rect (Screen.width / 2 - 400, Screen.height / 2 - 250, 800, 500);
-				GUI.Label(rectangulo, texto, estilo);
-            }
-		}
+
 		private void OnTriggerEnter(Collider collider)
 		{
+			if (collider.tag == "win")
+				win = true;
 			if (collider.tag == "muerte") {
-				gameOver ();
+				muerto = true;
+				if (!win)
+					explosion.Play ();
 			}
-		}
+    	}
 
 		private void gameOver () {
-			muerto = true;
+			text.text = "Game Over";
+			text.color = Color.red;
 		}
-    }
+
+		private void gameWon () {
+			text.text = "You Win!";
+			text.color = Color.green;
+		}
+}
 }
