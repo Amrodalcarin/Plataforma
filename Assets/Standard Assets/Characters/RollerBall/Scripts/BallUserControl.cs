@@ -12,7 +12,6 @@ namespace UnityStandardAssets.Vehicles.Ball
 		public ParticleSystem explosion_muerte;
 		public GameObject plano;
 		public Text text;
-        public Material quemado;
 		private bool muerto = false;
 		private bool win = false;
 
@@ -87,9 +86,8 @@ namespace UnityStandardAssets.Vehicles.Ball
 				win = true;
 			if (collider.tag == "muerte") {
 				muerto = true;
-                ball.GetComponent<Renderer>().material = quemado;
-                if (!win)
-                    explosion.Play();
+				if (!win)
+					explosion.Play ();
 			}
     	}
 
