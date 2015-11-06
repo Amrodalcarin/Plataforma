@@ -15,6 +15,8 @@ namespace UnityStandardAssets.Vehicles.Ball
 		private bool muerto = false;
 		private bool win = false;
 
+		public Material quemado;
+
         private Vector3 move;
         // the world-relative desired move direction, calculated from the camForward and user input.
 
@@ -29,8 +31,6 @@ namespace UnityStandardAssets.Vehicles.Ball
             // Set up the reference.
             ball = GetComponent<Ball>();
 
-			Console.Write ("TXT: HOLA");
-			
 			// get the transform of the main camera
             if (Camera.main != null)
             {
@@ -86,8 +86,11 @@ namespace UnityStandardAssets.Vehicles.Ball
 				win = true;
 			if (collider.tag == "muerte") {
 				muerto = true;
-				if (!win)
+				if (!win) {
 					explosion.Play ();
+					
+					ball.GetComponent<Renderer> ().material = quemado;
+				}
 			}
     	}
 
